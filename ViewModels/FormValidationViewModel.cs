@@ -95,14 +95,69 @@ namespace MauiStylesDemo.ViewModels
             this.ShowAgeError = !Age.HasValue || Age <= 13;
         }
         #endregion
+        #region Date
+        private bool showDateError;
+
+        public bool ShowDateError
+        {
+            get => showDateError;
+            set
+            {
+                showDateError = value;
+                OnPropertyChanged("ShowDateError");
+            }
+        }
+
+        private DateTime date;
+
+        public DateTime Date
+        {
+            get => date;
+            set
+            {
+                date = value;
+                ValidateAge();
+                OnPropertyChanged("Date");
+            }
+        }
+
+        private string dateError;
+
+        public string DateError
+        {
+            get => dateError;
+            set
+            {
+                dateError = value;
+                OnPropertyChanged("DateError");
+            }
+        }
+
+        private void ValidateDate()
+        {
+            DateTime today = DateTime.Now;
+            this.ShowDateError = today.Subtract(date).TotalDays>4745;
+        }
+
+
+        #endregion
+        #region password
+
+        #endregion
+
+
+
+
 
         public FormValidationViewModel()
         {
             this.NameError = "זהו שדה חובה";
             this.ShowNameError = false;
             this.AgeError = "הגיל חייב להיות גדול מ 13";
+            this.DateError = "הגיל חייב להיות גדול מ 13";
             this.ShowAgeError = false;
             this.SaveDataCommand = new Command(() => SaveData());
+
         }
 
         //This function validate the entire form upon submit!
@@ -111,13 +166,16 @@ namespace MauiStylesDemo.ViewModels
             //Validate all fields first
             ValidateAge();
             ValidateName();
+            ValidateDate();
 
             //check if any validation failed
             if (ShowAgeError ||
-                ShowNameError)
+                ShowNameError || ShowDateError)
                 return false;
             return true;
         }
+
+
 
         public Command SaveDataCommand { protected set; get; }
         private async void SaveData()
